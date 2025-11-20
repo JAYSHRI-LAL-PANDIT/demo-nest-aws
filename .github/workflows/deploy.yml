@@ -23,11 +23,15 @@ jobs:
           node-version: "22"
           cache: "pnpm"
 
-      # ✅ This is correct: corepack enables pnpm
+      # 🔥 FIX: Install pnpm properly (prevents "pnpm not found" error)
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+          run_install: false
+
       - name: Install dependencies with pnpm
-        run: |
-          corepack enable
-          pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       - name: Build app
         run: pnpm build
@@ -46,9 +50,10 @@ jobs:
         run: |
           docker push ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
 
+
   deploy:
     needs: build
-    runs-on: self-hosted   # ✅ your EC2 GitHub runner
+    runs-on: self-hosted   # your EC2 GitHub Actions runner
 
     steps:
       - name: Pull Image from Docker Hub
