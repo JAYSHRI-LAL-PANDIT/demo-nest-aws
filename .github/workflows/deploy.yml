@@ -21,14 +21,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "22"
-          cache: "pnpm"
 
-      # 🔥 FIX: Install pnpm properly (prevents "pnpm not found" error)
-      - name: Set up pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9
-          run_install: false
+      # ✅ Install pnpm globally so it's definitely in PATH
+      - name: Install pnpm
+        run: npm install -g pnpm
 
       - name: Install dependencies with pnpm
         run: pnpm install --frozen-lockfile
